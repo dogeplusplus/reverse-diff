@@ -1,8 +1,10 @@
 use std::ops::{Add, Sub, Div, Mul};
 use std::collections::{HashMap};
+use std::hash::{Hash, Hasher};
 
-#[derive(Copy,Eq)]
+#[derive(Clone,Eq)]
 struct Variable {
+    name: String,
     data: f32,
     grad: Vec<(Variable, f32)>,
 }
@@ -12,9 +14,22 @@ impl Add for Variable {
 
     fn add(self, other: Self) -> Self {
         Self {
+            name: format!("{} + {}", self.name, other.name),
             data: self.data + other.data,
             grad: vec![(self, 1.), (other, 1.)],
         }
+    }
+}
+
+impl PartialEq for Variable {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
+impl Hash for Variable {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
     }
 }
 
@@ -23,6 +38,7 @@ impl Sub for Variable {
 
     fn sub(self, other: Self) -> Self {
         Self {
+            name: format!("{} - {}", self.name, other.name),
             data: self.data - other.data,
             grad: vec![(self, 1.), (other, -1.)]
         }
@@ -34,6 +50,7 @@ impl Mul for Variable {
 
     fn mul(self, other: Self) -> Self {
         Self {
+            name: format!("{} * {}", self.name, other.name),
             data: self.data * other.data,
             grad: vec![(self, other.data), (other, self.data)],
         }
@@ -45,6 +62,7 @@ impl Div for Variable {
 
     fn div(self, other: Self) -> Self {
         Self {
+            name: format!("{} / {}", self.name, other.name),
             data: self.data * other.data,
             grad: vec![(self, 1. / other.data), (other, - self.data / other.data.powf(2.))],
         }
