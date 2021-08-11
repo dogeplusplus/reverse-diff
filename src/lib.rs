@@ -3,14 +3,14 @@ use std::collections::{HashMap};
 use std::hash::{Hash, Hasher};
 
 #[derive(Clone,Debug)]
-struct Variable {
-    name: String,
-    data: f32,
+pub struct Variable {
+    pub name: String,
+    pub data: f32,
     grad: Vec<(Variable, f32)>,
 }
 
 impl Variable {
-    fn new(name: String, data: f32) -> Self {
+    pub fn new(name: String, data: f32) -> Self {
         Variable {
             name: name,
             data: data,
@@ -78,7 +78,7 @@ impl Div for Variable {
 
         Self {
             name: format!("{} / {}", self.name, other.name),
-            data: self.data * other.data,
+            data: self.data / other.data,
             grad: vec![(self.clone(), 1. / y), (other, - x / y.powf(2.))],
         }
     }
@@ -101,20 +101,9 @@ fn compute_gradients(gradients: &mut HashMap<Variable, f32>, var: Variable, curr
     }
 }
 
-fn get_gradients(var: Variable) -> HashMap<Variable, f32> {
+pub fn get_gradients(var: Variable) -> HashMap<Variable, f32> {
     let mut gradients = HashMap::new();
     compute_gradients(&mut gradients, var, 1.);
     gradients
 }
 
-fn main() {
-    let a = Variable::new("a".to_string(), 4.);
-    let b = Variable::new("b".to_string(), 3.);
-    let c = a.clone() + b;
-    let d = a.clone() * c;
-    println!("d: {:?}", d);
-
-    let grad_d = get_gradients(d);
-    println!("dd/da: {}", grad_d[&a]);
-
-}
