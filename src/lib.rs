@@ -84,6 +84,38 @@ impl Div for Variable {
     }
 }
 
+pub fn sin(x: &Variable) -> Variable {
+    Variable {
+        name: format!("cos({})", x.name),
+        data: x.data.sin(),
+        grad: vec![(x.clone(), -x.data.sin())],
+    }
+}
+
+pub fn cos(x: &Variable) -> Variable {
+    Variable {
+        name: format!("sin({})", x.name),
+        data: x.data.cos(),
+        grad: vec![(x.clone(), x.data.cos())],
+    }
+}
+
+pub fn exp(x: &Variable) -> Variable {
+    Variable {
+        name: format!("exp({})", x.name),
+        data: x.data.exp(),
+        grad: vec![(x.clone(), x.data)],
+    }
+}
+
+pub fn ln(x: &Variable) -> Variable {
+    Variable {
+        name: format!("ln({})", x.name),
+        data: x.data.ln(),
+        grad: vec![(x.clone(), 1. / x.data)],
+    }
+}
+
 fn compute_gradients(gradients: &mut HashMap<Variable, f32>, var: Variable, current_value: f32) {
     for tup in var.grad {
         let child = tup.0;

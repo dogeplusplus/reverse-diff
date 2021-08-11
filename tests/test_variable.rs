@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use reverse_diff::{Variable, get_gradients};
+    use reverse_diff::{Variable, get_gradients, sin, cos, exp, ln};
 
     #[test]
     fn variable_instantiate() {
@@ -52,5 +52,21 @@ mod tests {
         assert_eq!(grad_d[&a], 11.0);
         assert_eq!(grad_d[&b], 4.0);
         assert_eq!(grad_d[&c], 4.0);
+    }
+
+    #[test]
+    fn trigonometric_functions() {
+        // TODO: Check for error tolerances.
+        let a = Variable::new("a".to_string(), std::f32::consts::PI / 2.);
+        let sin_a = sin(&a);
+        let cos_a = cos(&a);
+        assert_eq!(sin_a.data, 1.);
+        assert_eq!(cos_a.data, 0.);
+
+        let b = Variable::new("b".to_string(), 1.);
+        let exp_b = exp(&b);
+        let log_b = ln(&b);
+        assert_eq!(exp_b.data, std::f32::consts::E);
+        assert_eq!(log_b.data, 0.);
     }
 }
