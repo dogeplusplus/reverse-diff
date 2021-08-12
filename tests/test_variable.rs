@@ -62,10 +62,25 @@ mod tests {
         assert!((sin_a.data - 1.).abs() < f32::EPSILON);
         assert!((cos_a.data - 0.).abs() < f32::EPSILON);
 
-        let b = Variable::new("b".to_string(), 1.);
-        let exp_b = exp(&b);
-        let log_b = ln(&b);
-        assert!((exp_b.data - std::f32::consts::E).abs() < f32::EPSILON);
-        assert!((log_b.data - 0.).abs() < f32::EPSILON);
+        let grad_cos_a = get_gradients(cos_a);
+        let grad_sin_a = get_gradients(sin_a);
+
+        assert!((grad_sin_a[&a] + 1.).abs() < f32::EPSILON);
+        assert!((grad_cos_a[&a] - 0.).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn exponential_functions() {
+        let a = Variable::new("a".to_string(), 1.);
+        let exp_a = exp(&a);
+        let log_a = ln(&a);
+        assert!((exp_a.data - std::f32::consts::E).abs() < f32::EPSILON);
+        assert!((log_a.data - 0.).abs() < f32::EPSILON);
+
+        let grad_exp_a = get_gradients(exp_a);
+        let grad_log_a = get_gradients(log_a);
+
+        assert!((grad_exp_a[&a] - 1.).abs() < f32::EPSILON);
+        assert!((grad_log_a[&a] - 1.).abs() < f32::EPSILON);
     }
 }
