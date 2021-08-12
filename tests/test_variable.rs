@@ -56,17 +56,16 @@ mod tests {
 
     #[test]
     fn trigonometric_functions() {
-        // TODO: Check for error tolerances.
         let a = Variable::new("a".to_string(), std::f32::consts::PI / 2.);
         let sin_a = sin(&a);
         let cos_a = cos(&a);
-        assert_eq!(sin_a.data, 1.);
-        assert_eq!(cos_a.data, 0.);
+        assert!((sin_a.data - 1.).abs() < f32::EPSILON);
+        assert!((cos_a.data - 0.).abs() < f32::EPSILON);
 
         let b = Variable::new("b".to_string(), 1.);
         let exp_b = exp(&b);
         let log_b = ln(&b);
-        assert_eq!(exp_b.data, std::f32::consts::E);
-        assert_eq!(log_b.data, 0.);
+        assert!((exp_b.data - std::f32::consts::E).abs() < f32::EPSILON);
+        assert!((log_b.data - 0.).abs() < f32::EPSILON);
     }
 }
